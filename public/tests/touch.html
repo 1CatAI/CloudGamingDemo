@@ -1,0 +1,32 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>触屏复位回归测试</title>
+<body><h1>触屏复位回归测试</h1><p>模拟触摸事件仅作用于此测试页，不连接游戏。</p><button id="run">运行触屏测试</button><pre id="result" role="status">等待测试</pre><div id="touch-gamepad-host"></div>
+<script src="../vendor/universal-touch-gamepad.js"></script>
+<script>
+function touch(element,type,id,x,y){const event=new Event(type,{bubbles:true,cancelable:true});Object.defineProperty(event,'changedTouches',{value:[{identifier:id,clientX:x,clientY:y}]});element.dispatchEvent(event);}
+document.querySelector('#run').onclick=async()=>{
+ const result=document.querySelector('#result');
+ try{
+  localStorage.setItem('universalTouchGamepad_currentProfile','racing');
+  window.postMessage({type:'TOUCH_GAMEPAD_SETUP',payload:{targetDivId:'touch-gamepad-host',initialProfileName:'racing',visible:true}},location.origin);
+  await new Promise(r=>window.setTimeout(r,40));
+  const pedal=[...document.querySelectorAll('.touch-analog-trigger')].find(e=>e.textContent.includes('RT'));
+  const rect=pedal.getBoundingClientRect();
+  touch(pedal,'touchstart',1,rect.x+20,rect.y+rect.height*.5);
+  if(window.demoTouchState().buttons[7].value < .4) throw new Error('初始踏板输入失败');
+  window.demoResetTouch();
+  touch(pedal,'touchstart',2,rect.x+20,rect.y+rect.height*.2);
+  if(window.demoTouchState().buttons[7].value < .7) throw new Error('复位后新手指无法接管踏板');
+  touch(pedal,'touchend',2,rect.x+20,rect.y+rect.height*.2);
+  const stick=document.querySelector('.touch-joystick-base'), sr=stick.getBoundingClientRect();
+  touch(stick,'touchstart',3,sr.right-3,sr.y+sr.height/2);
+  window.demoResetTouch();
+  touch(stick,'touchmove',3,sr.right-3,sr.y+sr.height/2);
+  if(window.demoTouchState().axes[0] !== 0) throw new Error('复位后旧手指仍能操纵方向');
+  touch(stick,'touchstart',4,sr.x+3,sr.y+sr.height/2);
+  if(window.demoTouchState().axes[0] > -.5) throw new Error('复位后新手指无法接管方向');
+  window.demoResetTouch();
+  result.textContent='PASS：踏板与摇杆复位、旧触点隔离、新触点接管均正常。';
+ }catch(e){result.textContent='FAIL：'+e.message;}
+ finally{window.postMessage({type:'TOUCH_GAMEPAD_VISIBILITY',payload:{visible:false}},location.origin);}
+};
+</script></body></html>

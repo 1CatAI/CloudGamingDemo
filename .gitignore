@@ -1,0 +1,22 @@
+runtime/
+downloads/
+vendor/moonlight-web-stream/node_modules/
+vendor/moonlight-web-stream/dist/
+vendor/moonlight-web-stream/static/
+vendor/moonlight-web-stream-2.10.0/node_modules/
+vendor/moonlight-web-stream-2.10.0/dist/
+logs/
+local.json
+*.log
+/vendor/
+/dist/
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12
+*.zip
+*.exe
+# Private branding asset; keep personal copies outside public/.
+/public/assets/cloud-gaming-logo.jpg

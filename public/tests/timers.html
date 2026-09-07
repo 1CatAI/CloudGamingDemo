@@ -1,0 +1,21 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>按键计时器回归测试</title>
+<body><h1>按键计时器回归测试</h1><p>只测试浏览器内的模拟输入，不向游戏发送操作。</p><button id="run">运行测试</button><pre id="result" role="status">等待测试</pre>
+<script type="module">
+import {GameActionInput} from '../beamng-controls.js';
+document.querySelector('#run').onclick=async()=>{
+  const result=document.querySelector('#result');
+  const keys=[];
+  const input=new GameActionInput({buttons:{BUTTON_Y:32768},sendKey:(...args)=>keys.push(args)});
+  try{
+    input.pulse('camera');input.pulse('pause');
+    if(!input.active('camera')) throw new Error('按下状态缺失');
+    await new Promise(resolve=>window.setTimeout(resolve,230));
+    if(input.owners.size || input.timers.size) throw new Error('按键未自动释放');
+    if(keys.length!==2 || keys[0][0]!==true || keys[1][0]!==false) throw new Error('键盘释放不完整');
+    input.pulse('camera');input.pulse('pause');input.releaseAll();
+    if(input.owners.size || input.timers.size) throw new Error('断开清理失败');
+    await new Promise(resolve=>window.setTimeout(resolve,180));
+    result.textContent='PASS：真实浏览器定时器、点按自动释放、取消定时器和键盘释放均正常。';
+  }catch(e){result.textContent='FAIL：'+String(e);}
+};
+</script></body></html>

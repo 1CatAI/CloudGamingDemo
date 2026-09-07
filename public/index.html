@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1018">
+  <title>云游戏DEMO</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/demo.css">
+  <script src="/vendor/universal-touch-gamepad.js"></script>
+  <script type="module" src="/demo.js"></script>
+</head>
+<body>
+  <main id="screen" aria-label="游戏画面"></main>
+  <header class="hud">
+    <div class="brand"><span>云游戏DEMO<span class="sub">内网串流</span></span></div>
+    <div class="telemetry"><span id="state" role="status">检查主机</span><span id="stats">720P / 30FPS · H.265</span><button id="latency" hidden aria-expanded="false" aria-controls="latency-panel" title="查看编解码与传输延迟">延迟：采样中</button></div>
+    <div class="actions"><button id="sound" hidden>开启声音</button><button id="keys" hidden aria-pressed="false">按键</button><button id="fullscreen" aria-label="切换全屏">全屏</button><button id="disconnect" hidden>断开</button></div>
+  </header>
+  <section id="welcome" class="welcome">
+    <div class="welcome-intro">
+    <div class="eyebrow">LAN SESSION / 01</div>
+    <h1>准备驾驶</h1>
+    <p id="hint">在电脑上打开游戏，然后连接。</p>
+    <button id="start" class="primary" disabled>连接主机 <span>↗</span></button>
+    </div>
+    <div class="welcome-options">
+    <div class="settings"><label for="preset">串流预设</label><select id="preset"></select></div>
+    <div class="settings"><label for="codec">编码格式</label><select id="codec"></select></div>
+    <div class="bitrate-control">
+      <div class="bitrate-heading"><label for="bitrate">视频码率</label><output id="bitrate-value" for="bitrate">自动</output></div>
+      <input id="bitrate" type="range" min="0" max="13" step="1" value="0" aria-valuetext="自动推荐" aria-describedby="bitrate-help">
+      <div id="bitrate-ticks" class="bitrate-ticks" aria-hidden="true"></div>
+      <div class="bitrate-scale" id="bitrate-help"><span>自动推荐</span><span>300 Mbps</span></div>
+    </div>
+    <p id="preset-hint" class="preset-hint"></p>
+    <p class="mapping">左摇杆转向 · 踏板向上滑加大，松手归零<br>重置、修复、视角等操作常驻屏幕边缘</p>
+    </div>
+    <p id="error" class="error" role="alert" hidden></p>
+  </section>
+  <div id="rotate">横屏握持，驾驶更方便</div>
+  <section id="latency-panel" class="latency-panel" hidden aria-label="实时延迟明细">
+    <strong>视频链路延迟 · 实时估算</strong>
+    <dl><dt>主机采集 / 编码</dt><dd id="lat-host">—</dd><dt>主机转发</dt><dd id="lat-bridge">—</dd><dt>传输（估算）</dt><dd id="lat-network">—</dd><dt>接收 / 缓冲</dt><dd id="lat-buffer">—</dd><dt>解码</dt><dd id="lat-decode">—</dd><dt>总计</dt><dd id="lat-total">—</dd><dt>客户端网络 RTT</dt><dd id="lat-rtt">—</dd><dt>主机内部 RTT</dt><dd id="lat-local-rtt">—</dd></dl>
+    <p>总计从主机画面采集到手机解码完成；单向传输按 RTT/2 估算。不含游戏逻辑、触控上行和屏幕显示耗时。</p>
+    <p id="lat-missing" role="status"></p>
+  </section>
+  <div id="touch-gamepad-host"></div>
+  <div id="game-controls" hidden>
+    <div id="actions-left" class="action-bank bank-left" role="group" aria-label="车辆与游戏操作"></div>
+    <div id="actions-right" class="action-bank bank-right" role="group" aria-label="车灯与动力操作"></div>
+    <div id="actions-driving" class="action-bank bank-driving" role="group" aria-label="手刹与换挡"></div>
+  </div>
+  <div id="notification-list" aria-live="polite"></div>
+  <footer id="footer">HTTP 内网连接 <span id="encoder"></span></footer>
+</body>
+</html>

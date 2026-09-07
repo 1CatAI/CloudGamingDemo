@@ -1,0 +1,12 @@
+{
+  "name": "cloud-gaming-demo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "node --check server.mjs && node --check public/demo.js"
+  },
+  "engines": { "node": ">=22" }
+}
